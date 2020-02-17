@@ -14,7 +14,7 @@ CCP_POSTGIS_VERSION ?= 2.5
 
 # Valid values: buildah (default), docker
 IMGBUILDER ?= buildah
-IMGCMDSTEM=sudo --preserve-env buildah bud --layers $(SQUASH)
+IMGCMDSTEM=sudo -E buildah bud --layers $(SQUASH)
 
 # pgaudit compatibility is tied to PG version
 ifeq ($(CCP_PGVERSION),9.5)
@@ -77,6 +77,7 @@ pgdump: pgdump-pgimg-$(IMGBUILDER)
 pgpool: pgpool-pgimg-$(IMGBUILDER)
 pgrestore: pgrestore-pgimg-$(IMGBUILDER)
 postgres: postgres-pgimg-$(IMGBUILDER)
+postgres-adb: postgres-adb-pgimg-$(IMGBUILDER)
 postgres-ha: postgres-ha-pgimg-$(IMGBUILDER)
 postgres-gis: postgres-gis-pgimg-$(IMGBUILDER)
 postgres-gis-ha: postgres-gis-ha-pgimg-$(IMGBUILDER)
@@ -112,7 +113,7 @@ ccbase-image-build: $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.base.$(CCP_BASEOS)
 		$(CCPROOT)
 
 ccbase-image-buildah: ccbase-image-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-base:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-base:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-base:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-base:$(CCP_IMAGE_TAG)
 
 ccbase-image-docker: ccbase-image-build
 
@@ -131,7 +132,7 @@ cc-pg-base-image-build: ccbase-image $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.pg-base
 		$(CCPROOT)
 
 cc-pg-base-image-buildah: cc-pg-base-image-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-pg-base:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-pg-base:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-pg-base:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-pg-base:$(CCP_IMAGE_TAG)
 
 cc-pg-base-image-docker: cc-pg-base-image-build
 
@@ -150,7 +151,7 @@ postgres-pgimg-build: cc-pg-base-image commands $(CCPROOT)/$(CCP_BASEOS)/Dockerf
 		$(CCPROOT)
 
 postgres-pgimg-buildah: postgres-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres:$(CCP_IMAGE_TAG)
 
 postgres-pgimg-docker: postgres-pgimg-build
 
@@ -168,7 +169,7 @@ postgres-gis-pgimg-build: postgres commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.
 		$(CCPROOT)
 
 postgres-gis-pgimg-buildah: postgres-gis-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG)
 
 postgres-gis-pgimg-docker: postgres-gis-pgimg-build
 
@@ -188,7 +189,23 @@ postgres-ha-pgimg-build: cc-pg-base-image commands $(CCPROOT)/$(CCP_BASEOS)/Dock
 		$(CCPROOT)
 
 postgres-ha-pgimg-buildah: postgres-ha-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG)
+
+postgres-adb-pgimg-build: cc-pg-base-image commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-adb.$(CCP_BASEOS)
+	$(IMGCMDSTEM) \
+		-f $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-adb.$(CCP_BASEOS) \
+		-t $(CCP_IMAGE_PREFIX)/postgres-adb:$(CCP_IMAGE_TAG) \
+		--build-arg BASEVER=$(CCP_VERSION) \
+		--build-arg PG_FULL=$(CCP_PG_FULLVERSION) \
+		--build-arg PG_MAJOR=$(CCP_PGVERSION) \
+		--build-arg PREFIX=$(CCP_IMAGE_PREFIX) \
+		--build-arg BACKREST_VER=$(CCP_BACKREST_VERSION) \
+		--build-arg PGAUDIT_LBL="$(CCP_PGAUDIT)" \
+		$(CCPROOT)
+
+postgres-adb-pgimg-buildah: postgres-adb-pgimg-build
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/postgres-adb:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/postgres-adb:$(CCP_IMAGE_TAG)
+
 
 postgres-ha-pgimg-docker: postgres-ha-pgimg-build
 
@@ -206,7 +223,7 @@ postgres-gis-ha-pgimg-build: postgres-ha commands $(CCPROOT)/$(CCP_BASEOS)/Docke
 		$(CCPROOT)
 
 postgres-gis-ha-pgimg-buildah: postgres-gis-ha-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-gis-ha:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-gis-ha:$(CCP_IMAGE_TAG)
 
 postgres-gis-ha-pgimg-docker: postgres-gis-ha-pgimg-build
 
@@ -224,7 +241,7 @@ backrest-restore-pgimg-build: cc-pg-base-image $(CCPROOT)/$(CCP_BASEOS)/Dockerfi
 		$(CCPROOT)
 
 backrest-restore-pgimg-buildah: backrest-restore-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-backrest-restore:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-backrest-restore:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-backrest-restore:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-backrest-restore:$(CCP_IMAGE_TAG)
 
 backrest-restore-pgimg-docker: backrest-restore-pgimg-build
 
@@ -240,7 +257,7 @@ backrest-restore-pgimg-docker: backrest-restore-pgimg-build
 		$(CCPROOT)
 
 %-pgimg-buildah: %-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG)
 
 %-pgimg-docker: %-pgimg-build ;
 
@@ -256,7 +273,7 @@ backrest-restore-pgimg-docker: backrest-restore-pgimg-build
 		$(CCPROOT)
 
 %-img-buildah: %-img-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-$*:$(CCP_IMAGE_TAG)
 
 %-img-docker: %-img-build ;
 
@@ -278,7 +295,7 @@ upgrade-%-pgimg-build: cc-pg-base-image $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.upgr
 		$(CCPROOT)
 
 upgrade-%-pgimg-buildah: upgrade-%-pgimg-build
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-upgrade:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-upgrade:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-upgrade:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-upgrade:$(CCP_IMAGE_TAG)
 
 upgrade-%-pgimg-docker: upgrade-%-pgimg-build ;
 
