@@ -1,8 +1,8 @@
 ARG PREFIX
 ARG BASEVER
 ARG PG_FULL
-FROM ${PREFIX}/crunchy-pg-base:centos7-${PG_FULL}-${BASEVER}
 
+FROM ${PREFIX}/crunchy-base:centos7-${PG_FULL}-${BASEVER}
 # ===== Early lines ordered for leveraging cache, reorder carefully =====
 ARG PG_MAJOR
 
@@ -11,6 +11,15 @@ ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}"
 
 ARG BACKREST_VER
 ARG PGAUDIT_LBL
+
+
+ARG PGDG_REPO_RPM=https://download.postgresql.org/pub/repos/yum/${PG_MAJOR}/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+ARG S3_REPO_RPM=https://pts-source.s3.didiyunapi.com/postgres/postgres-server-12.1-1.el7.x86_64.rpm
+
+RUN yum -y install ${PGDG_REPO_RPM} \
+	&& sed -i 's/enabled=1/enabled=0/' /etc/yum.repos.d/pgdg*.repo \
+	&& yum -y clean all --enablerepo="pgdg${PG_MAJOR//.}"
+
 
 # Separate yum run matching postgres-ha image, leverages cached layer
 RUN yum -y install \
@@ -25,7 +34,7 @@ RUN yum -y install \
 	&& yum -y clean all --enablerepo="pgdg${PG_MAJOR//.}"
 
 # install postgres server local
-RUN yum -y localinstall https://didiyum.sys.xiaojukeji.com/didiyum/repos/yum/12/redhat/rhel-7.7-x86_64/postgres-server-12.1-1.x86_64.rpm
+RUN yum -y localinstall ${S3_REPO_RPM}
 
 # ===== Steps unique to this image after here =====
 LABEL name="postgres" \
