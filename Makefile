@@ -191,7 +191,7 @@ postgres-ha-pgimg-build: cc-pg-base-image commands $(CCPROOT)/$(CCP_BASEOS)/Dock
 postgres-ha-pgimg-buildah: postgres-ha-pgimg-build
 	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG)
 
-postgres-adb-pgimg-build: cc-pg-base-image commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-adb.$(CCP_BASEOS)
+postgres-adb-pgimg-build: ccbase-image commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-adb.$(CCP_BASEOS)
 	$(IMGCMDSTEM) \
 		-f $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-adb.$(CCP_BASEOS) \
 		-t $(CCP_IMAGE_PREFIX)/postgres-adb:$(CCP_IMAGE_TAG) \

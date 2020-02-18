@@ -27,8 +27,6 @@ RUN yum -y install \
 	--setopt=skip_missing_names_on_install=False \
 	openssh-clients \
 	openssh-server \
-	pgaudit${PGAUDIT_LBL} \
-	pgbackrest-${BACKREST_VER} \
 	psmisc \
 	rsync \
 	&& yum -y clean all --enablerepo="pgdg${PG_MAJOR//.}"
