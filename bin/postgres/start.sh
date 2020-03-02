@@ -447,7 +447,7 @@ then
 fi
 
 configure_archiving
-
+## use custom config
 source /opt/cpm/bin/custom-configs.sh
 
 # Run pre-start hook if it exists
