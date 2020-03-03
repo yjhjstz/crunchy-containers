@@ -7,6 +7,7 @@ function custom_config() {
     src=${1?}
     dest=${2?}
     mode=${3?}
+    RECOVERY_FILE_TEMP='/tmp/pgrepl-recovery.conf'
     if [[ -f ${src?} ]]
     then
         echo_info "Custom ${src?} detected.  Applying custom configuration.."
@@ -16,6 +17,11 @@ function custom_config() {
 
         chmod ${mode?} ${dest?}
         err_check "$?" "Applying custom configuration" "Could not set mode ${mode?} on ${dest?}"
+
+        if [[ "$PG_MODE" = "replica" ]] && [[ "$src" = "/pgconf/postgresql.conf" ]]; then
+            echo_info "Patching recovery settings in ${RECOVERY_FILE_TEMP}"
+            cat $RECOVERY_FILE_TEMP >> $PGDATA/postgresql.conf
+        fi
     fi
 }
 
@@ -26,3 +32,4 @@ custom_config "/pgconf/server.key" "${PGDATA?}/server.key" 600
 custom_config "/pgconf/server.crt" "${PGDATA?}/server.crt" 600
 custom_config "/pgconf/ca.crt" "${PGDATA?}/ca.crt" 600
 custom_config "/pgconf/ca.crl" "${PGDATA?}/ca.crl" 600
+
