@@ -7,7 +7,7 @@ FROM ${PREFIX}/crunchy-base:centos7-${PG_FULL}-${BASEVER}
 ARG PG_MAJOR
 
 # Preserving PGVERSION out of paranoia
-ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}"
+ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}" BACKREST_VERSION="2.18"
 
 ARG BACKREST_VER
 ARG PGAUDIT_LBL
@@ -25,6 +25,7 @@ RUN yum -y install ${PGDG_REPO_RPM} \
 RUN yum -y install \
 	--enablerepo="pgdg${PG_MAJOR//.}" \
 	--setopt=skip_missing_names_on_install=False \
+	sudo \
 	openssh-clients \
 	openssh-server \
 	psmisc \
