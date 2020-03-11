@@ -34,3 +34,39 @@ docker run \
     --hostname=pgbench \
     --network=pgnet \
     -d $CCP_IMAGE_PREFIX/crunchy-pgbench:$CCP_IMAGE_TAG
+
+
+
+sudo docker run \
+    -e PG_DATABASE='postgres' \
+    -e PG_HOSTNAME='10.178.2.20' \
+    -e PG_PASSWORD='WQbyRfjYsh' \
+    -e PG_PORT='5432' \
+    -e PG_USERNAME='postgres' \
+    -e PGBENCH_BENCHMARK_OPTS='--connect --progress=2' \
+    -e PGBENCH_CLIENTS=10 \
+    -e PGBENCH_INIT_OPTS='--no-vacuum' \
+    -e PGBENCH_JOBS=5 \
+    -e PGBENCH_SCALE=5 \
+    -e PGBENCH_TRANSACTIONS=100 \
+    --name=pgbench \
+    --hostname=pgbench \
+    --network=host \
+    -d hub.didiyun.com/postgres/crunchy-pgbench:centos7-12.1-4.2.1
+
+sudo docker run \
+    -e PG_DATABASE='postgres' \
+    -e PG_HOSTNAME='10.178.2.198' \
+    -e PG_PASSWORD='JdWaPerxsA' \
+    -e PG_PORT='5432' \
+    -e PG_USERNAME='postgres' \
+    -e PGBENCH_BENCHMARK_OPTS='--connect --progress=2' \
+    -e PGBENCH_CLIENTS=10 \
+    -e PGBENCH_INIT_OPTS='--no-vacuum' \
+    -e PGBENCH_JOBS=5 \
+    -e PGBENCH_SCALE=5 \
+    -e PGBENCH_TRANSACTIONS=100 \
+    --name=pgbench \
+    --hostname=pgbench \
+    --network=host \
+    -d hub.didiyun.com/postgres/crunchy-pgbench:centos7-12.1-4.2.1

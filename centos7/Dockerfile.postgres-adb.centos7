@@ -7,7 +7,7 @@ FROM ${PREFIX}/crunchy-base:centos7-${PG_FULL}-${BASEVER}
 ARG PG_MAJOR
 
 # Preserving PGVERSION out of paranoia
-ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}" BACKREST_VERSION="2.18"
+ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}" BACKREST_VERSION="2.24"
 
 ARG BACKREST_VER
 ARG PGAUDIT_LBL
@@ -25,7 +25,7 @@ RUN yum -y install ${PGDG_REPO_RPM} \
 RUN yum -y install \
 	--enablerepo="pgdg${PG_MAJOR//.}" \
 	--setopt=skip_missing_names_on_install=False \
-	sudo \
+	sudo openssl-devel libxml2-devel \
 	openssh-clients \
 	openssh-server \
 	psmisc \
@@ -66,6 +66,10 @@ ADD bin/postgres /opt/cpm/bin
 ADD bin/common /opt/cpm/bin
 ADD conf/postgres /opt/cpm/conf
 ADD tools/pgmonitor/exporter/postgres /opt/cpm/bin/modules/pgexporter
+# add self build pgbackrest
+ADD bin/postgres/pgbackrest /usr/bin
+RUN chmod 755 /usr/bin/pgbackrest && touch /etc/pgbackrest.conf && \
+    chmod 644 /etc/pgbackrest.conf 
 
 RUN chmod g=u /etc/passwd && \
 	chmod g=u /etc/group
