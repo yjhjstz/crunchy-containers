@@ -7,7 +7,7 @@ FROM ${PREFIX}/crunchy-base:centos7-${PG_FULL}-${BASEVER}
 ARG PG_MAJOR
 
 # Preserving PGVERSION out of paranoia
-ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}" BACKREST_VERSION="2.24"
+ENV PGROOT="/usr/pgsql-${PG_MAJOR}" PGVERSION="${PG_MAJOR}" BACKREST_VERSION="2.18"
 
 ARG BACKREST_VER
 ARG PGAUDIT_LBL
@@ -19,7 +19,7 @@ ARG S3_REPO_RPM=https://pts-source.s3.didiyunapi.com/postgres/postgres-server-12
 
 
 # Separate yum run matching postgres-ha image, leverages cached layer
-RUN yum -y install \
+RUN yum -y install  perl perl-Time-HiRes perl-Digest-SHA perl-JSON-PP perl-ExtUtils-Embed \
 	sudo openssl-devel libxml2-devel \
 	openssh-clients \
 	openssh-server \
@@ -61,10 +61,16 @@ ADD bin/postgres /opt/cpm/bin
 ADD bin/common /opt/cpm/bin
 ADD conf/postgres /opt/cpm/conf
 ADD tools/pgmonitor/exporter/postgres /opt/cpm/bin/modules/pgexporter
+ADD conf/postgres/postgresql-pgdg-libs.conf /etc/ld.so.conf.d/
+RUN ldconfig
+
 # add self build pgbackrest
-ADD bin/postgres/pgbackrest /usr/bin
-RUN chmod 755 /usr/bin/pgbackrest && touch /etc/pgbackrest.conf && \
-    chmod 644 /etc/pgbackrest.conf 
+ADD bin/postgres/pgbackrest /usr/bin/pgbackrest
+ADD bin/postgres/pgbackrest-conf.patch /etc/pgbackrest.conf
+RUN chmod 755 /usr/bin/pgbackrest && \
+    chown postgres:postgres /etc/pgbackrest.conf && chmod 640 /etc/pgbackrest.conf && \ 
+    mkdir -m 770 /var/log/pgbackrest && mkdir -m 770 /var/spool/pgbackrest && \
+    chown postgres:postgres /var/log/pgbackrest  &&  chown postgres:postgres /var/spool/pgbackrest
 
 RUN chmod g=u /etc/passwd && \
 	chmod g=u /etc/group

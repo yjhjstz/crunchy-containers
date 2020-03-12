@@ -1,0 +1,5 @@
+[global]
+repo1-path=/var/lib/pgbackrest
+
+#[main]
+#pg1-path=/var/lib/pgsql/10/data
