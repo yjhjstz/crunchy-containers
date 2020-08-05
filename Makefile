@@ -160,10 +160,10 @@ postgres-pgimg-docker: postgres-pgimg-build
 
 # ----- Special case pg-based image (postgres-gis) -----
 # Special case args: POSTGIS_LBL
-postgres-gis-pgimg-build: postgres commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-gis.$(CCP_BASEOS)
-	$(IMGCMDSTEM) \
+postgres-gis-pgimg-build: ccbase-image commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-gis.$(CCP_BASEOS)
+	 $(IMGCMDSTEM) \
 		-f $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.postgres-gis.$(CCP_BASEOS) \
-		-t $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG) \
+		-t $(CCP_IMAGE_PREFIX)/postgres-gis:$(CCP_IMAGE_TAG) \
 		--build-arg BASEVER=$(CCP_VERSION) \
 		--build-arg PG_FULL=$(CCP_PG_FULLVERSION) \
 		--build-arg PG_MAJOR=$(CCP_PGVERSION) \
@@ -172,7 +172,7 @@ postgres-gis-pgimg-build: postgres commands $(CCPROOT)/$(CCP_BASEOS)/Dockerfile.
 		$(CCPROOT)
 
 postgres-gis-pgimg-buildah: postgres-gis-pgimg-build
-	sudo -E buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-gis:$(CCP_IMAGE_TAG)
+	sudo -E buildah push $(CCP_IMAGE_PREFIX)/postgres-gis:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/postgres-gis:$(CCP_IMAGE_TAG)
 
 postgres-gis-pgimg-docker: postgres-gis-pgimg-build
 
