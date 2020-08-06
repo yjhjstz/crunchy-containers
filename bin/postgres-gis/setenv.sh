@@ -30,7 +30,7 @@ if [[ -v PGDATA_PATH_OVERRIDE ]]; then
 fi
 
 export PATH=/opt/cpm/bin:$PGROOT/bin:$PATH
-export LD_LIBRARY_PATH=$PGROOT/lib:/usr/local/proj4/lib:/usr/local/gdal/lib:/usr/local/geos/lib
+export LD_LIBRARY_PATH=$PGROOT/lib:/usr/local/proj4/lib:/usr/local/gdal/lib:/usr/local/geos/lib:/opt/rh/llvm-toolset-7/root/usr/lib64/
 
 # if [[ -d ${PGDATA} ]]; then
 #     chown postgres:postgres ${PGDATA?}
