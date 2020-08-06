@@ -74,6 +74,7 @@ RUN mkdir -p "/tmp/postgis-${POSTGIS_VERSION}-build" && \
 cd "/tmp/postgis-${POSTGIS_VERSION}-build" && \
 git clone https://github.com/postgis/postgis.git
 
+RUN yum install -y devtoolset-7 llvm-toolset-7
 RUN cd "/tmp/postgis-${POSTGIS_VERSION}-build/postgis"  && \ 
 git checkout origin/stable-3.0 && ./autogen.sh && \
 ./configure --with-pgconfig=/usr/pgsql-${PG_MAJOR}/bin/pg_config --with-geosconfig=/usr/local/geos/bin/geos-config --with-projdir=/usr/local/proj4 --with-gdalconfig=/usr/local/gdal/bin/gdal-config
