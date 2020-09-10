@@ -3,6 +3,7 @@ SET application_name="container_setup";
 
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 CREATE EXTENSION IF NOT EXISTS quantum;
+CREATE EXTENSION IF NOT EXISTS pg_partman;
 
 ALTER USER postgres PASSWORD 'PG_ROOT_PASSWORD';
 
@@ -24,6 +25,7 @@ GRANT ALL ON primarytable TO PG_PRIMARY_USER;
 
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 CREATE EXTENSION IF NOT EXISTS quantum;
+CREATE EXTENSION IF NOT EXISTS pg_partman;
 
 --- Verify permissions via PG_USER
 
