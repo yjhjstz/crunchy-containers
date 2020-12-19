@@ -20,5 +20,5 @@ RUN yum -y update \
 		gettext \
 		hostname \
 		procps-ng \
-		net-tools \
+		net-tools gdb sysstat \
 	&& yum -y clean all
