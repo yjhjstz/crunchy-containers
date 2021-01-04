@@ -110,7 +110,7 @@ function initdb_logic() {
     echo_info "Starting initdb.."
 
     #	tar xzf /opt/cpm/conf/data.tar.gz --directory=$PGDATA
-    cmd="initdb -D $PGDATA "
+    cmd="initdb -k -D $PGDATA "
     if [[ -v PG_LOCALE ]]; then
         cmd+=" --locale="$PG_LOCALE
     fi
