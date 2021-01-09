@@ -177,7 +177,7 @@ max_parallel_workers_per_gather = 8	# taken from max_worker_processes
 wal_level = replica			# minimal, replica, or logical
 					# (change requires restart)
 fsync = on				# turns forced synchronization on or off
-synchronous_commit = on		# synchronization level;
+synchronous_commit = off		# synchronization level;
 					# off, local, remote_write, or on
 #wal_sync_method = fsync		# the default is the first option
 					# supported by the operating system:
