@@ -17,4 +17,11 @@ source /opt/cpm/bin/common_lib.sh
 enable_debugging
 source /opt/cpm/bin/setenv.sh
 
-$PGROOT/bin/psql -f /opt/cpm/bin/readiness.sql -U $PG_USER --port="${PG_PRIMARY_PORT}" postgres
+hostname=${HOSTNAME?}
+
+if [[ -v PGHOST ]]
+then
+    hostname=${PGHOST}
+fi
+
+$PGROOT/bin/psql -h ${hostname?} -f /opt/cpm/bin/readiness.sql -U $PG_USER --port="${PG_PRIMARY_PORT}" postgres
