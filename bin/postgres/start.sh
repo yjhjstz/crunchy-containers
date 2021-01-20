@@ -149,6 +149,7 @@ function initdb_logic() {
 }
 
 function fill_conf_file() {
+    SHARED_BUFFERS=`awk '($1 == "MemTotal:"){print int($2/1048576/2)}' /proc/meminfo`"GB"
     env_check_info "TEMP_BUFFERS" "Setting TEMP_BUFFERS to ${TEMP_BUFFERS:-8MB}."
     env_check_info "LOG_MIN_DURATION_STATEMENT" "Setting LOG_MIN_DURATION_STATEMENT to ${LOG_MIN_DURATION_STATEMENT:-60000}."
     env_check_info "LOG_STATEMENT" "Setting LOG_STATEMENT to ${LOG_STATEMENT:-none}."
