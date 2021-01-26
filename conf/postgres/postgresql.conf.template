@@ -141,7 +141,7 @@ dynamic_shared_memory_type = posix	# the default is the first option
 
 #max_files_per_process = 1000		# min 25
 					# (change requires restart)
-shared_preload_libraries = 'pg_stat_statements.so, pg_partman_bgw'		# (change requires restart)
+shared_preload_libraries = 'citus,pg_stat_statements.so, pg_partman_bgw'		# (change requires restart)
 pg_partman_bgw.dbname = 'postgres'
 
 # - Cost-Based Vacuum Delay -
