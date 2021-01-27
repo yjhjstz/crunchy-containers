@@ -25,7 +25,7 @@ RUN yum -y install  perl perl-Time-HiRes perl-Digest-SHA perl-JSON-PP perl-ExtUt
 	openssh-clients \
 	openssh-server \
 	psmisc \
-	rsync perf \
+	rsync perf python3-devel python36-setuptools \
 	&& yum -y clean all
 
 # install postgres server local
