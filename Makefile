@@ -231,7 +231,7 @@ postgres-gis-pgimg-docker: postgres-gis-pgimg-build
 
 # ----- Special case pg-based image (postgres-ha) -----
 # Special case args: BACKREST_VER, PATRONI_VER
-postgres-ha-pgimg-build: postgres-pgimg-build $(CCPROOT)/build/postgres-ha/Dockerfile
+postgres-ha-pgimg-build: ccbase-image $(CCPROOT)/build/postgres-ha/Dockerfile
 	$(IMGCMDSTEM) \
 		-f $(CCPROOT)/build/postgres-ha/Dockerfile \
 		-t $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) \

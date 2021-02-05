@@ -108,7 +108,7 @@ fi
 ADD conf/*KEY* /
 
 # Add any available Crunchy PG repo files
-ADD conf/crunchypg${PG_LBL}.repo /etc/yum.repos.d/
+#ADD conf/crunchypg${PG_LBL}.repo /etc/yum.repos.d/
 # Import both keys to support all required repos
 RUN rpm --import RPM-GPG-KEY-crunchydata*
 RUN if [ "$DFSET" = "rhel" ] ; then rpm --import CRUNCHY-GPG-KEY.public ; fi
