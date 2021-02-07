@@ -81,7 +81,8 @@ git checkout origin/stable-3.0 && ./autogen.sh && \
 
 RUN cd "/tmp/postgis-${POSTGIS_VERSION}-build/postgis" && make install &&  cd / && rm -rf /tmp/postgis-${POSTGIS_VERSION}-build
 
-RUN cd /tmp && git clone https://github.com/citusdata/citus.git && cd citus && git checkout v9.5.1 && export PG_CONFIG=/usr/pgsql-${PG_MAJOR}/bin/pg_config && ./configure && make install
+RUN yum install -y lz4-devel libzstd-devel
+RUN cd /tmp && git clone https://github.com.cnpmjs.org/citusdata/citus.git && cd citus && git checkout master && export PG_CONFIG=/usr/pgsql-${PG_MAJOR}/bin/pg_config && ./configure && make install
 
 # open up the postgres port
 EXPOSE 5432
