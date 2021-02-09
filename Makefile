@@ -67,7 +67,7 @@ endif
 
 # list of image names, helpful in pushing
 images = crunchy-postgres \
-	crunchy-postgres-ha \
+	postgres-adb-ha \
 	crunchy-upgrade \
 	crunchy-pgbackrest \
 	crunchy-pgbackrest-repo \
@@ -234,7 +234,7 @@ postgres-gis-pgimg-docker: postgres-gis-pgimg-build
 postgres-ha-pgimg-build: ccbase-image $(CCPROOT)/build/postgres-ha/Dockerfile
 	$(IMGCMDSTEM) \
 		-f $(CCPROOT)/build/postgres-ha/Dockerfile \
-		-t $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) \
+		-t $(CCP_IMAGE_PREFIX)/postgres-adb-ha:$(CCP_IMAGE_TAG) \
 		--build-arg BASEOS=$(CCP_BASEOS) \
 		--build-arg BASEVER=$(CCP_VERSION) \
 		--build-arg PG_FULL=$(CCP_PG_FULLVERSION) \
@@ -248,7 +248,7 @@ postgres-ha-pgimg-build: ccbase-image $(CCPROOT)/build/postgres-ha/Dockerfile
 postgres-ha-pgimg-buildah: postgres-ha-pgimg-build ;
 # only push to docker daemon if variable IMG_PUSH_TO_DOCKER_DAEMON is set to "true"
 ifeq ("$(IMG_PUSH_TO_DOCKER_DAEMON)", "true")
-	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/crunchy-postgres-ha:$(CCP_IMAGE_TAG)
+	sudo --preserve-env buildah push $(CCP_IMAGE_PREFIX)/postgres-adb-ha:$(CCP_IMAGE_TAG) docker-daemon:$(CCP_IMAGE_PREFIX)/postgres-adb-ha:$(CCP_IMAGE_TAG)
 endif
 
 postgres-ha-pgimg-docker: postgres-ha-pgimg-build
