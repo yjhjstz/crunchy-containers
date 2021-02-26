@@ -253,6 +253,42 @@ validate_env() {
     fi
 }
 
+# Set Dynamic config variables
+set_dynamic_pg_conf_env() {
+    if [[ ! -v SHARED_BUFFERS ]]
+    then
+        ## set shared_buffers to half of total mem
+        export SHARED_BUFFERS=$(awk '($1 == "MemTotal:"){print int($2/1024/2)}' /proc/meminfo)"MB"
+    fi
+}
+
+# Apply dynamic env to config file
+# args: [1] config file
+apply_dynamic_pg_conf() {
+    config_file=$1
+    if [[ -z "$config_file" ]]
+    then
+        return
+    fi
+
+    patch_file=$(mktemp /tmp/pgconf.XXXX.yaml)
+    cat << EOF > ${patch_file}
+---
+bootstrap:
+  dcs:
+    postgresql:
+      parameters:
+EOF
+
+    if [[ ! -z "$SHARED_BUFFERS" ]]; then
+        echo "        ""shared_buffers: ${SHARED_BUFFERS}" >> ${patch_file}
+    fi
+
+    ${CRUNCHY_DIR}/bin/yq m -i -x "${config_file}" "${patch_file}"
+
+    rm -f "${patch_file}"
+}
+
 # Build the Patroni bootstrap configuration file
 build_bootstrap_config_file() {
 
@@ -399,6 +435,10 @@ build_bootstrap_config_file() {
     sed -i "s/PATRONI_REPLICATION_USERNAME/$PATRONI_REPLICATION_USERNAME/g" "${pghba_file}"
     "${CRUNCHY_DIR}/bin/yq" m -i -x "${bootstrap_file}" "${pghba_file}"
 
+    # apply dynamic config after local yaml settings,
+    # but before custom config file
+    apply_dynamic_pg_conf "${bootstrap_file}"
+
     if [[ -f "/pgconf/postgres-ha.yaml" ]]
     then
         echo_info "Applying custom postgres-ha configuration file"
@@ -441,6 +481,9 @@ set_bootstrap_method
 
 # Perform any additional validation of env vars required
 validate_env
+
+# Set dynamic pg config variables
+set_dynamic_pg_conf_env
 
 # Create the Patroni bootstrap configuration file
 build_bootstrap_config_file

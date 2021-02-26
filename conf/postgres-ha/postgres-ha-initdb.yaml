@@ -11,12 +11,18 @@ bootstrap:
         max_connections: 300
         archive_timeout: 60
         log_directory: pg_log
+        max_worker_processes: 128
+        max_parallel_workers: 64
+        max_parallel_workers_per_gather: 8
         shared_buffers: 128MB
         temp_buffers: 8MB
         log_min_duration_statement: 60000
         log_statement: none
-        work_mem: 4MB
+        work_mem: 16MB
+        wal_level: logical
         max_wal_senders: 6
+        max_wal_size: 4GB
+        min_wal_size: 1GB
         random_page_cost: 1.1
         shared_preload_libraries: pg_stat_statements.so
   initdb:
