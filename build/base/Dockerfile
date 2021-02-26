@@ -76,15 +76,21 @@ RUN if [ "$BASEOS" = "ubi8" ] ; then \
         && ${PACKAGER} -y clean all ; \
 fi
 
+# use aliyun repo
 RUN if [ "$BASEOS" = "centos7" ] ; then \
-        ${PACKAGER} -y update \
+        ${PACKAGER} -y clean all \ 
+        && rm -f /etc/yum.repos.d/*.repo \
+        && curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo \
+        && curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo \
+        && ${PACKAGER} makecache \
+        && ${PACKAGER} -y update \
         && ${PACKAGER} -y install \
                 --setopt=skip_missing_names_on_install=False \
-                epel-release \
                 bind-utils \
                 gettext \
                 hostname \
                 procps-ng \
+                gdb perf sysstat \
         && ${PACKAGER} -y clean all ; \
 fi
 
