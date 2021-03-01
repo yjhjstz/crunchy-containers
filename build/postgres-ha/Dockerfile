@@ -76,6 +76,9 @@ ADD conf/postgres-ha /opt/crunchy/conf/postgres-ha
 ADD yq /opt/crunchy/bin
 RUN chmod +x /opt/crunchy/bin/yq
 
+RUN yum install -y lz4-devel libzstd-devel
+RUN cd /tmp && git clone https://github.com.cnpmjs.org/citusdata/citus.git && cd citus && git checkout master && export PG_CONFIG=/usr/pgsql-${PG_MAJOR}/bin/pg_config && ./configure && make install
+
 # The VOLUME directive must appear after all RUN directives to ensure the proper
 # volume permissions are applied when building the image
 VOLUME ["/pgdata", "/pgwal", "/pgconf", "/backrestrepo", "/sshd"]
