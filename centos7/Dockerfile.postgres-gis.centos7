@@ -81,14 +81,16 @@ make -j $(( 2 * $(cat /proc/cpuinfo | egrep ^processor | wc -l) )) \
  && cd / && rm -rf /tmp/gdal-${GDAL_VERSION}-build
 
 
-RUN yum install -y git autoconf automake libtool m4 which libxml2 libxml2-devel byacc flex libxslt
+RUN yum install -y git autoconf automake libtool m4 which libxml2 libxml2-devel byacc flex libxslt file
 
 RUN mkdir -p "/tmp/postgis-${POSTGIS_VERSION}-build" && \
 cd "/tmp/postgis-${POSTGIS_VERSION}-build" && \
 git clone https://github.com.cnpmjs.org/postgis/postgis.git
 
-RUN yum install -y epel-release devtoolset-7 llvm-toolset-7
+#RUN yum install -y epel-release devtoolset-7 llvm-toolset-7
 RUN cd "/tmp/postgis-${POSTGIS_VERSION}-build/postgis"  && \ 
+export PKG_CONFIG_PATH=/usr/local/protobuf/lib/pkgconfig && \
+export PATH=/usr/local/protobuf/bin:/usr/local/protobuf-c/bin:$PATH && \
 git checkout origin/stable-3.0 && ./autogen.sh && \
 ./configure --with-pgconfig=/usr/pgsql-${PG_MAJOR}/bin/pg_config --with-geosconfig=/usr/local/geos/bin/geos-config --with-projdir=/usr/local/proj4 --with-gdalconfig=/usr/local/gdal/bin/gdal-config --with-protobufdir=/usr/local/protobuf-c
 
