@@ -15,7 +15,20 @@ LABEL name="postgres-gis" \
 
 USER 0
 
-RUN yum -y install gdal-python make automake gcc gcc-c++ libcurl-devel bzip2 bunzip2 python-devel
+RUN yum -y install wget gdal-python make automake gcc gcc-c++ libcurl-devel bzip2 bunzip2 python-devel libtool
+
+RUN wget https://github.com/google/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz && \
+tar zxvf protobuf-all-3.6.1.tar.gz && cd  protobuf-3.6.1 && \
+./autogen.sh && \
+./configure  --prefix=/usr/local/protobuf && \
+make -j4&& make install
+
+RUN wget https://github.com/protobuf-c/protobuf-c/releases/download/v1.3.1/protobuf-c-1.3.1.tar.gz && \
+tar -zxvf protobuf-c-1.3.1.tar.gz && \ 
+cd protobuf-c-1.3.1 && \
+export PKG_CONFIG_PATH=/usr/local/protobuf/lib/pkgconfig && \
+./configure  --prefix=/usr/local/protobuf-c && \
+make -j4 && make install
 
 ENV GEOS_VERSION=3.7.1
 ENV GDAL_VERSION=2.4.0
@@ -72,12 +85,12 @@ RUN yum install -y git autoconf automake libtool m4 which libxml2 libxml2-devel 
 
 RUN mkdir -p "/tmp/postgis-${POSTGIS_VERSION}-build" && \
 cd "/tmp/postgis-${POSTGIS_VERSION}-build" && \
-git clone https://github.com/postgis/postgis.git
+git clone https://github.com.cnpmjs.org/postgis/postgis.git
 
-RUN yum install -y devtoolset-7 llvm-toolset-7
+RUN yum install -y epel-release devtoolset-7 llvm-toolset-7
 RUN cd "/tmp/postgis-${POSTGIS_VERSION}-build/postgis"  && \ 
 git checkout origin/stable-3.0 && ./autogen.sh && \
-./configure --with-pgconfig=/usr/pgsql-${PG_MAJOR}/bin/pg_config --with-geosconfig=/usr/local/geos/bin/geos-config --with-projdir=/usr/local/proj4 --with-gdalconfig=/usr/local/gdal/bin/gdal-config
+./configure --with-pgconfig=/usr/pgsql-${PG_MAJOR}/bin/pg_config --with-geosconfig=/usr/local/geos/bin/geos-config --with-projdir=/usr/local/proj4 --with-gdalconfig=/usr/local/gdal/bin/gdal-config --with-protobufdir=/usr/local/protobuf-c
 
 
 RUN cd "/tmp/postgis-${POSTGIS_VERSION}-build/postgis" && make install &&  cd / && rm -rf /tmp/postgis-${POSTGIS_VERSION}-build
