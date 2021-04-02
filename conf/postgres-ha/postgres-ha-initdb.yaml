@@ -24,7 +24,7 @@ bootstrap:
         max_wal_size: 4GB
         min_wal_size: 1GB
         random_page_cost: 1.1
-        shared_preload_libraries: citus,pg_stat_statements.so
+        shared_preload_libraries: citus,pg_stat_statements.so,pg_partman_bgw.so
   initdb:
   - encoding: UTF8
   - data-checksums
